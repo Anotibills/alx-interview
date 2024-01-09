@@ -2,6 +2,8 @@
 """
 Function that determines all boxes are opened
 """
+
+
 def canUnlockAll(boxes):
     if not isinstance(boxes, list):
         return False
