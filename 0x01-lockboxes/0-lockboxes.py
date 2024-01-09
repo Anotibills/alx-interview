@@ -1,3 +1,4 @@
+#/usr/bin/python3
 """
 Function that determines all boxes are opened
 """
