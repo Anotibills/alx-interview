@@ -2,25 +2,35 @@
 """
 A method that calculates the fewest number of operations needed to result
 """
+import math
+
+
+def factors(n):
+    '''
+    This returns the factors of n.
+    '''
+    my_list = []
+    while n % 2 == 0:
+        my_list.append(2)
+        n //= 2
+    for i in range(3, int(math.sqrt(n)) + 1, 2):
+        while n % i == 0:
+            my_list.append(i)
+            n //= i
+    if n > 2:
+        my_list.append(n)
+    return my_list
 
 
 def minOperations(n):
     '''
-    This returns the minimum operations to get n H's
+    This calculates the minimum operations.
     '''
-    min_operations = 0
-
-    if n <= 1:
-        return min_operations
-
     if not isinstance(n, int) or n < 2:
         return 0
-
-    for i in range(2, n + 1):
-        while n % i == 0:
-            min_operations += i
-            n //= i
-    return min_operations
+    else:
+        num_operations = sum(factors(n))
+        return int(num_operations)
 
 
 if __name__ == '__main__':
