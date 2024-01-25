@@ -22,11 +22,8 @@ def parse_line(line, file_size, status_codes):
     try:
         line = line.rstrip('\n')
         words = line.split(' ')
-        # File size is the last parameter on stdout
         file_size[0] += int(words[-1])
-        # Status code comes before file size
         status_code = int(words[-2])
-        # Move through the dictionary of status codes
         if status_code in status_codes:
             status_codes[status_code] += 1
     except ValueError:
@@ -42,7 +39,6 @@ if __name__ == '__main__':
     try:
         for line in sys.stdin:
             parse_line(line, file_size, status_codes)
-            # Print after every 10 lines
             if linenum % 10 == 0:
                 print_stats(file_size, status_codes)
             linenum += 1
