@@ -15,37 +15,40 @@ def process_logs():
         '200': 0, '301': 0, '400': 0, '401': 0,
         '403': 0, '404': 0, '405': 0, '500': 0
     }
-
     try:
         for line in sys.stdin:
             args = line.split(' ')
-            if len(args) > 7:
-                file_size = int(args[-1])
-                status_code = args[-2]
-                if status_code in status_code_counts:
-                    status_code_counts[status_code] += 1
-                total_file_size += file_size
+            if len(args) > 2:
+                status_line = args[-2]
+                file_size = args[-1]
+
+                if status_line in status_code:
+                    status_code[status_line] += 1
+
+                sum_file_size += int(file_size)
                 i += 1
+
                 if i == 10:
-                    print_stats(total_file_size, status_code_counts)
+                    print('File size: {:d}'.format(sum_file_size))
+                    print_status_code(status_code)
                     i = 0
-        print_stats(total_file_size, status_code_counts)
-    except KeyboardInterrupt:
-        print_stats(total_file_size, status_code_counts)
+
+    except Exception:
+        pass
+    finally:
+        print('File size: {:d}'.format(sum_file_size))
+        print_status_code(status_code)
 
 
 def print_stats(total_file_size, status_code_counts):
     '''
     This prints the taotal file size and code status
     '''
-    print(f"Total file size: {total_file_size}")
-    sorted_status_codes = sorted(
-        status_code_counts.keys(), key=lambda x: int(x)
-    )
-    for status_code in sorted_status_codes:
-        count = status_code_counts[status_code]
-        if count != 0:
-            print(f"{status_code}: {count}")
+    sorted_keys = sorted(status_code.keys())
+    for key in sorted_keys:
+        value = status_code[key]
+        if value != 0:
+            print('{}: {}'.format(key, value))
 
 
 if __name__ == "__main__":
