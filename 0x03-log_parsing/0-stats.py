@@ -5,51 +5,48 @@ A script that reads stdin line by line and computes metrics
 import sys
 
 
-def process_logs():
-    '''
-    This computes the process log
-    '''
-    i = 0
-    total_file_size = 0
-    status_code_counts = {
-        '200': 0, '301': 0, '400': 0, '401': 0,
-        '403': 0, '404': 0, '405': 0, '500': 0
-    }
-    try:
-        for line in sys.stdin:
-            args = line.split(' ')
-            if len(args) > 2:
-                status_line = args[-2]
-                file_size = args[-1]
-
-                if status_line in status_code:
-                    status_code[status_line] += 1
-
-                sum_file_size += int(file_size)
-                i += 1
-
-                if i == 10:
-                    print('File size: {:d}'.format(sum_file_size))
-                    print_status_code(status_code)
-                    i = 0
-
-    except Exception:
-        pass
-    finally:
-        print('File size: {:d}'.format(sum_file_size))
-        print_status_code(status_code)
-
-
 def print_stats(total_file_size, status_code_counts):
     '''
     This prints the taotal file size and code status
     '''
-    sorted_keys = sorted(status_code.keys())
-    for key in sorted_keys:
-        value = status_code[key]
-        if value != 0:
-            print('{}: {}'.format(key, value))
+    print('File size: {}'.format(file_size[0]))
+    for key in sorted(status_codes.keys()):
+        if status_codes[key]:
+            print('{}: {}'.format(key, status_codes[key]))
 
 
-if __name__ == "__main__":
-    process_logs()
+def parse_line(line, file_size, status_codes):
+    '''
+    This correlate the line and file sizes
+    '''
+    try:
+        line = line.rstrip('\n')
+        words = line.split(' ')
+        # File size is the last parameter on stdout
+        file_size[0] += int(words[-1])
+        # Status code comes before file size
+        status_code = int(words[-2])
+        # Move through the dictionary of status codes
+        if status_code in status_codes:
+            status_codes[status_code] += 1
+    except ValueError:
+        pass
+
+
+if __name__ == '__main__':
+    file_size = [0]
+    status_codes = {200: 0, 301: 0, 400: 0, 401: 0,
+                    403: 0, 404: 0, 405: 0, 500: 0}
+
+    linenum = 1
+    try:
+        for line in sys.stdin:
+            parse_line(line, file_size, status_codes)
+            # Print after every 10 lines
+            if linenum % 10 == 0:
+                print_stats(file_size, status_codes)
+            linenum += 1
+    except KeyboardInterrupt:
+        print_stats(file_size, status_codes)
+        raise
+    print_stats(file_size, status_codes)
