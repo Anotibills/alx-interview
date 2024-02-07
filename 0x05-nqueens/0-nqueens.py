@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """
 A program that solves the N queens problem
 """
@@ -13,41 +13,41 @@ def print_board(board):
         print(' '.join(map(str, row)))
 
 
-def is_safe(board, row, col, number):
+def is_safe(board, row, column, number):
     '''
     This returns true if it's safe to place a queen, False otherwise
     '''
-    for i in range(col):
+    for i in range(column):
         if board[row][i] == 1:
             return False
 
-    for i, j in zip(range(row, -1, -1), range(col, -1, -1)):
+    for i, j in zip(range(row, -1, -1), range(column, -1, -1)):
         if board[i][j] == 1:
             return False
 
-    for i, j in zip(range(row, number), range(col, -1, -1)):
+    for i, j in zip(range(row, number), range(column, -1, -1)):
         if board[i][j] == 1:
             return False
 
     return True
 
 
-def solve_n_queens_util(board, col, number):
+def solve_n_queens_util(board, column, number):
     '''
     This returns true if a solution is found, False otherwise
     '''
-    if col == number:
+    if column == number:
         print_board(board)
         return True
 
-    res = False
+    result = False
     for i in range(number):
-        if is_safe(board, i, col, number):
-            board[i][col] = 1
-            res = solve_n_queens_util(board, col + 1, number) or res
-            board[i][col] = 0  # Backtrack
+        if is_safe(board, i, column, number):
+            board[i][column] = 1
+            res = solve_n_queens_util(board, column + 1, number) or result
+            board[i][column] = 0  # Backtrack
 
-    return res
+    return result
 
 
 def solve_n_queens(number):
@@ -84,4 +84,3 @@ def validate(args):
 if __name__ == "__main__":
     number = validate(sys.argv)
     solve_n_queens(number)
-
