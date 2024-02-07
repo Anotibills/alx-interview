@@ -5,82 +5,64 @@ A program that solves the N queens problem
 import sys
 
 
-def print_board(board):
+class NQueen:
     '''
-    This prints the board with queens placed.
+    This is class for solving N queens problem
     '''
-    for row in board:
-        print(' '.join(map(str, row)))
 
+    def __init__(self, n):
+        '''
+        This initialize variables
+        '''
+        self.n = n
+        self.x = [0] * (n + 1)
+        self.res = []
 
-def is_safe(board, row, column, number):
-    '''
-    This returns true if it's safe to place a queen, False otherwise
-    '''
-    for i in range(column):
-        if board[row][i] == 1:
-            return False
-
-    for i, j in zip(range(row, -1, -1), range(column, -1, -1)):
-        if board[i][j] == 1:
-            return False
-
-    for i, j in zip(range(row, number), range(column, -1, -1)):
-        if board[i][j] == 1:
-            return False
-
-    return True
-
-
-def solve_n_queens_util(board, column, number):
-    '''
-    This returns true if a solution is found, False otherwise
-    '''
-    if column == number:
-        print_board(board)
+    def place(self, k, i):
+        '''
+        This attacks in range
+        '''
+        for j in range(1, k):
+            if self.x[j] == i or abs(self.x[j] - i) == abs(j - k):
+                return False
         return True
 
-    result = False
-    for i in range(number):
-        if is_safe(board, i, column, number):
-            board[i][column] = 1
-            res = solve_n_queens_util(board, column + 1, number) or result
-            board[i][column] = 0  # Backtrack
-
-    return result
-
-
-def solve_n_queens(number):
-    '''
-    This returns true if a solution is found, False otherwise
-    '''
-    board = [[0 for _ in range(number)] for _ in range(number)]
-
-    if not solve_n_queens_util(board, 0, number):
-        return False
-
-    return True
-
-
-def validate(args):
-    '''
-    This returns the validated board size
-    '''
-    if len(args) == 2:
-        try:
-            number = int(args[1])
-            if number < 4:
-                print("N must be at least 4")
-                exit(1)
-            return number
-        except ValueError:
-            print("N must be a number")
-            exit(1)
-    else:
-        print("Usage: nqueens N")
-        exit(1)
+    def nQueen(self, k):
+        '''
+        This accepts args starting queen from which to evaluate
+        '''
+        for i in range(1, self.n + 1):
+            if self.place(k, i):
+                self.x[k] = i
+                if k == self.n:
+                    solution = []
+                    for i in range(1, self.n + 1):
+                        solution.append([i - 1, self.x[i] - 1])
+                    self.res.append(solution)
+                else:
+                    self.nQueen(k + 1)
+        return self.res
 
 
 if __name__ == "__main__":
-    number = validate(sys.argv)
-    solve_n_queens(number)
+    if len(sys.argv) != 2:
+        print("Usage: nqueens N")
+        sys.exit(1)
+
+    N = sys.argv[1]
+
+    try:
+        N = int(N)
+    except ValueError:
+        print("N must be a number")
+        sys.exit(1)
+
+    if N < 4:
+        print("N must be at least 4")
+        sys.exit(1)
+
+    queen = NQueen(N)
+    res = queen.nQueen(1)
+
+    for i in res:
+        print(i)
