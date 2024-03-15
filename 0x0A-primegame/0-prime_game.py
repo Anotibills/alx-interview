@@ -5,40 +5,27 @@ This is the prime game winner determination
 
 
 def isWinner(x, nums):
-    """
-    This determine winner of each round and the player who won the most rounds.
-    """
-    if x < 1 or not nums:
-        return None
+    '''
+    This determines the best result
+    '''
+    score = {"Maria": 0, "Ben": 0}
+    primes = [0, 0, 2]
+    add_prime(max(nums), primes)
 
-    m_wins = 0
-    b_wins = 0
-
-    for n in nums:
-        if n == 1:
-            b_wins += 1
-            continue
-
-        # Check if Maria can make a move
-        if n % 2 == 0:
-            m_wins += 1
-            continue
-
-        # Check if Ben can make a move
-        for i in range(3, int(n**0.5) + 1, 2):
-            if n % i == 0:
-                b_wins += 1
-                break
+    for round in range(x):
+        _sum=sum((i!=0)*(i<=nums[round])for i in primes[:nums[round]+1])
+        if _sum % 2:
+            winner = "Maria"
         else:
-            m_wins += 1
+            winner = "Ben"
+        if winner == "Maria":
+            score["Maria"] += 1
+        elif winner == "Ben":
+            score["Ben"] += 1
 
-    if m_wins == b_wins:
-        return None
+    if score["Maria"] > score["Ben"]:
+        return "Maria"
+    elif score["Ben"] > score["Maria"]:
+        return "Ben"
 
-    return 'Maria' if m_wins > b_wins else 'Ben'
-
-
-if __name__ == "__main__":
-    x = 3
-    nums = [4, 5, 1]
-    print(isWinner(x, nums))  # Output: Ben
+    return None
