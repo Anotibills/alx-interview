@@ -29,8 +29,12 @@ def isWinner(x, nums):
     primes = generate_primes(max_num)
 
     for round_num in range(x):
-        round_score = sum(1 for prime in primes if prime <= nums[round_num])
+        round_score = sum(
+            1 for prime in primes if prime <= nums[round_num]
+        )
         winner = "Maria" if round_score % 2 != 0 else "Ben"
         score[winner] += 1
 
-    return max(score, key=score.get) if score["Maria"] != score["Ben"] else None
+    return max(score, key=score.get) \
+        if score["Maria"] != score["Ben"] else None
+
